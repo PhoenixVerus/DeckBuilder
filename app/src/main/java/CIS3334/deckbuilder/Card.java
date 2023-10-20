@@ -1,25 +1,29 @@
 package CIS3334.deckbuilder;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class Card implements Serializable {
+@Entity
+public class Card {
 
-    private String id;
-    private String name;
-    private ArrayList<String> types;
+    @PrimaryKey (autoGenerate = true)
+    public Integer dbId;
 
-    public Card(String id, String name, ArrayList<String> types){
+    //This is the id that the API uses to identify each card
+    public String id;
+    public String name;
+    //public String types;
+
+    public Card(String id, String name){
         this.id = id;
         this.name = name;
-        this.types = types;
+        //this.types = types;
     }
 
     public Card(){
         id = "";
         name = "";
-        types = new ArrayList<>();
+        //types = "";
     }
 
     public String getName() {
@@ -30,11 +34,11 @@ public class Card implements Serializable {
         return id;
     }
 
-    public String getTypes() {
+    /*public String getTypes() {
         String allTypes = "";
         for(String type : types) {
             allTypes += type + "\n";
         }
         return allTypes;
-    }
+    }*/
 }

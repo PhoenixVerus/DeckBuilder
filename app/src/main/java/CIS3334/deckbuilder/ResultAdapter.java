@@ -8,15 +8,21 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to send information to the results view holder
+ */
 public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
 
+    private Application application;
+    private MainViewModel mainViewModel;
     private List<Card> cards;
 
-    public ResultAdapter() {
+    public ResultAdapter(Application application, MainViewModel mainViewModel) {
+        this.application = application;
+        this.mainViewModel = mainViewModel;
         cards = new ArrayList<>();
     }
 
@@ -32,12 +38,12 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
     public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
         holder.textViewName.setText(cards.get(position).getName());
         holder.textViewId.setText(cards.get(position).getId());
-        holder.textViewTypes.setText(cards.get(position).getTypes());
+        //holder.textViewTypes.setText(cards.get(position).getTypes());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return cards.size();
     }
 
     public void updateCardList(List<Card> newCardList) { cards = newCardList; }

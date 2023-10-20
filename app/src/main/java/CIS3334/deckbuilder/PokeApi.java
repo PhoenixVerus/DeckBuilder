@@ -10,7 +10,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * PokeApi class to call the Pokemon TCG API and retrieve card data
+ * OLD: PokeApi class to call the Pokemon TCG API and retrieve card data;
+ * used in previous Java course but appears to not work here; will most likely remove
+ * if I can get Google Volley to work
  */
 public class PokeApi {
 
