@@ -37,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextSearch;
     Button buttonViewInventory;
     Button buttonSearch;
-    TextView textViewTest;
-    //PokeApi pokeApi;
+    PokeApi pokeApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         editTextSearch = findViewById(R.id.editTextSearch);
         buttonViewInventory = findViewById(R.id.buttonViewInventory);
-        textViewTest = findViewById(R.id.textViewTest);
-        //pokeApi = new PokeApi();
+        pokeApi = new PokeApi(this);
 
         setupButtonSearch();
         setupRecyclerViewResults();
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method setting up the search button, which calls the getCards()
+     * Method setting up the search button, which calls the getCardsWithVolley()
      * method with in turn makes an API call
      */
     private void setupButtonSearch() {
@@ -68,43 +66,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("Brain Fart", "Button is clicked");
-                getCards();
+                String query = editTextSearch.getText().toString();
+                Log.d("Brain Fart", "Text of query fetched");
+                try {
+                    pokeApi.getCardWithVolley(query);
+                    //pokeApi.getCardArrayWithVolley(query);
+                    Log.d("Brain Fart", "Card not ready ... calling GetCardWithVolley");
+                    // TODO: Listen for JSON response and then push info to the view model
+                    mainViewModel.insert(pokeApi.retrievedCard.getId(), pokeApi.retrievedCard.getName(), pokeApi.retrievedCard.getTypes(), pokeApi.retrievedCard.getImages(), pokeApi.retrievedCard.getSupertype(), pokeApi.retrievedCard.getSet());
+                    Log.d("Brain Fart", "Card has been retrieved with name = " + pokeApi.retrievedCard.getName());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("Brain Fart", "Query failed to call.");
+                }
             }
         });
-    }
-
-    /**
-     * Method to call the Pokemon TCG API and return card information
-     * Currently having problems with the emulator running this, will try with
-     * a physical phone when I can
-     */
-    private void getCards() {
-        //Getting the query the user has typed in to use it in our API search
-        String query = editTextSearch.getText().toString();
-        //String url = "https://api.pokemontcg.io/v2/cards?=name:" + query;
-        String url = "https://api.pokemontcg.io/v2/cards/" + query;
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String jsonCard = response.toString();
-                        Gson gson = new Gson();
-                        Card card = gson.fromJson(jsonCard, Card.class);
-                        textViewTest.setText(card.getName());
-                    }
-                },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        textViewTest.setText("ERROR Response: " + error.toString());
-                    }
-                });
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(jsonObjectRequest);
     }
 
     /**
@@ -112,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupRecyclerViewResults() {
         recyclerViewSearchResults = findViewById(R.id.recyclerViewSearchResults);
-        resultsAdapter = new ResultAdapter(getApplication(),mainViewModel);
+        resultsAdapter = new ResultAdapter();
         recyclerViewSearchResults.setAdapter(resultsAdapter);
         recyclerViewSearchResults.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -126,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<Card> cards) {
                 Log.d("Brain Fart", "MainActivity -- LiveData Observer -- Number of cards = "+cards.size());
-                resultsAdapter.updateCardList(cards);
                 resultsAdapter.notifyDataSetChanged();
+                resultsAdapter.updateCardList(cards);
             }
         });
     }
@@ -135,19 +112,14 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Setup of View Your Inventory which will open a different activity
      * to see the cards the user has saved to their "inventory"
-     * CURRENTLY being used as a testing dummy to make sure the recycler view
-     * is working
      */
-    private  void setupButtonViewInventory() {
+    private void setupButtonViewInventory() {
         buttonViewInventory = findViewById(R.id.buttonViewInventory);
         buttonViewInventory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("Brain Fart", "Inventory button is clicked");
-                //hard-coded card info to test the GUI setup
-                mainViewModel.insert("id here", "Charizard");
-                //test line to see if the button is actually interacting with the GUI
-                textViewTest.setText("Charizard? Where are ya, buddy?");
+
             }
         });
     }

@@ -19,8 +19,8 @@ public class MainViewModel extends AndroidViewModel {
         cardList = cardRepository.getAll();
     }
 
-    public void insert(String id, String name) {
-        Card card = new Card(id, name);
+    public void insert(String id, String name, ArrayList<String> types, Images image, String supertype, Set set) {
+        Card card = new Card(id, name, types, image, supertype, set);
         cardRepository.insert(card);
     }
 

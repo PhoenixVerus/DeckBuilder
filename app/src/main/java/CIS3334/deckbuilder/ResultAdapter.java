@@ -11,18 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.squareup.picasso.Picasso;
+
 /**
  * Class to send information to the results view holder
  */
 public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
 
-    private Application application;
-    private MainViewModel mainViewModel;
     private List<Card> cards;
 
-    public ResultAdapter(Application application, MainViewModel mainViewModel) {
-        this.application = application;
-        this.mainViewModel = mainViewModel;
+    public ResultAdapter() {
         cards = new ArrayList<>();
     }
 
@@ -38,7 +36,10 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
     public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
         holder.textViewName.setText(cards.get(position).getName());
         holder.textViewId.setText(cards.get(position).getId());
-        //holder.textViewTypes.setText(cards.get(position).getTypes());
+        holder.textViewTypes.setText(cards.get(position).getTypesString());
+        holder.textViewSeries.setText(cards.get(position).getSet().getSeries());
+        holder.textViewClass.setText(cards.get(position).getSupertype());
+        Picasso.get().load(cards.get(position).images.getSmallImg()).into(holder.imageViewCardResult);
     }
 
     @Override
