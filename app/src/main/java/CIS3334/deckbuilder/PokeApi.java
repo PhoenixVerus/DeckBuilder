@@ -33,25 +33,23 @@ import org.json.JSONObject;
  */
 public class PokeApi {
 
+    MainViewModel mainViewModel;
     private Gson gson;
     Context activityContext;
     Card retrievedCard;
     ArrayList<Card> cardList = new ArrayList<Card>();
 
-    public Boolean cardHasBeenRetrieved = false;
-
-    //public PokeApi() { gson = new Gson(); }
-
-    public PokeApi(Context activityContext) {
+    public PokeApi(Context activityContext, MainViewModel mainViewModel) {
         gson = new Gson();
         this.activityContext = activityContext;
+        this.mainViewModel = mainViewModel;
     }
 
     /**
      * Method to retrieve a card from the PokeAPI
      * @return matching card
      */
-
+    /*
     public void getCardWithVolley(String query) {
         // Define URL to use.
         String url = "https://api.pokemontcg.io/v2/cards/" + query;
@@ -78,7 +76,6 @@ public class PokeApi {
                         Log.d("Brain Fart","Card read with name =  "+newCard.getId() );
 
                         retrievedCard = newCard;
-                        cardHasBeenRetrieved = true;
                     }
                 },
                 new Response.ErrorListener() {
@@ -94,17 +91,17 @@ public class PokeApi {
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(jsonObjectRequest);
-
-        //cardHasBeenRetrieved = false;
     }
+     */
 
     public void getCardArrayWithVolley(String query) {
-        String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query;
-        JsonArrayRequest jsonArrayRequest  = new JsonArrayRequest (Request.Method.GET, url,null,
-                new Response.Listener<JSONArray>() {
+        String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query + "&pageSize=3";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
+                            Log.d("Brain Fart","Received Response ");
                             String jsonFact= response.toString();
                             Log.d("Brain Fart","JSON =  "+jsonFact);
                             Gson gson = new Gson();
@@ -116,8 +113,8 @@ public class PokeApi {
                                 // implementation 'com.google.code.gson:gson:2.10.1'//Card newCard = gson.fromJson(jsonFact, Card.class);
                                 Log.d("Brain Fart","Card read with name =  "+newCard.getName()+" and id =  "+newCard.getId() );
                                 retrievedCard = newCard;
+                                mainViewModel.insert(retrievedCard);
                             }
-                            cardHasBeenRetrieved = true;
                         } catch (Exception e) {
                             Log.d("Brain Fart", "In getCardArrayWithVolley -- JSONException = "+e.toString());
                         }
@@ -127,54 +124,12 @@ public class PokeApi {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Brain Fart", "In getCardArrayWithVolley -- onErrorResponse = "+error);
-
                     }
                 });
 
         RequestQueue queue = Volley.newRequestQueue(activityContext);
         // need this for timeout issue
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(jsonArrayRequest);
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(jsonObjectRequest);
     }
-
-    /*
-    public void getCardArrayWithVolley(String query) {
-        String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query;
-        JsonArrayRequest jsonArrayRequest  = new JsonArrayRequest (Request.Method.GET, url,null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            String jsonFact= response.toString();
-                            Log.d("Brain Fart","JSON =  "+jsonFact);
-                            Gson gson = new Gson();
-                            ApiArrayWrapper dataArray = gson.fromJson(jsonFact, ApiArrayWrapper.class);
-                            Log.d("Brain Fart","Number of cards received =  "+dataArray.data.size());
-                            // Loop through the array elements
-                            for (Card newCard :dataArray.data) {
-                                // Remember to add the following to the module build.gradle file for the gson library for parsing json files
-                                // implementation 'com.google.code.gson:gson:2.10.1'//Card newCard = gson.fromJson(jsonFact, Card.class);
-                                Log.d("Brain Fart","Card read with name =  "+newCard.getName()+" and id =  "+newCard.getId() );
-                                retrievedCard = newCard;
-                            }
-                            cardHasBeenRetrieved = true;
-                        } catch (Exception e) {
-                            Log.d("Brain Fart", "In getCardArrayWithVolley -- JSONException = "+e.toString());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Brain Fart", "In getCardArrayWithVolley -- onErrorResponse = "+error);
-
-                    }
-                });
-
-        RequestQueue queue = Volley.newRequestQueue(activityContext);
-        // need this for timeout issue
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(jsonArrayRequest);
-    }
-*/
 }

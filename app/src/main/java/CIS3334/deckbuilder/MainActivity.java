@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         editTextSearch = findViewById(R.id.editTextSearch);
         buttonViewInventory = findViewById(R.id.buttonViewInventory);
-        pokeApi = new PokeApi(this);
+        pokeApi = new PokeApi(this, mainViewModel);
 
         setupButtonSearch();
         setupRecyclerViewResults();
@@ -69,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
                 String query = editTextSearch.getText().toString();
                 Log.d("Brain Fart", "Text of query fetched");
                 try {
-                    pokeApi.getCardWithVolley(query);
-                    //pokeApi.getCardArrayWithVolley(query);
+                    //pokeApi.getCardWithVolley(query);
+                    pokeApi.getCardArrayWithVolley(query);
                     Log.d("Brain Fart", "Card not ready ... calling GetCardWithVolley");
                     // TODO: Listen for JSON response and then push info to the view model
-                    mainViewModel.insert(pokeApi.retrievedCard.getId(), pokeApi.retrievedCard.getName(), pokeApi.retrievedCard.getTypes(), pokeApi.retrievedCard.getImages(), pokeApi.retrievedCard.getSupertype(), pokeApi.retrievedCard.getSet());
+
                     Log.d("Brain Fart", "Card has been retrieved with name = " + pokeApi.retrievedCard.getName());
 
                 } catch (Exception e) {
@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<Card> cards) {
                 Log.d("Brain Fart", "MainActivity -- LiveData Observer -- Number of cards = "+cards.size());
-                resultsAdapter.notifyDataSetChanged();
                 resultsAdapter.updateCardList(cards);
+                resultsAdapter.notifyDataSetChanged();
             }
         });
     }
