@@ -81,7 +81,6 @@ public class PokeApi {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
                         Log.d("Brain Fart","error from JSON Request. VolleyError =  "+error.toString() );
                     }
                 });
@@ -96,6 +95,7 @@ public class PokeApi {
 
     public void getCardArrayWithVolley(String query) {
         String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query + "&pageSize=3";
+        Log.d("Brain Fart","Query input: " + url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
                 new Response.Listener<JSONObject>() {
                     @Override

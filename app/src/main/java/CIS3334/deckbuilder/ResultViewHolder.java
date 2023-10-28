@@ -19,7 +19,7 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     ImageView imageViewCardResult;
     TextView textViewClass;
     TextView textViewSeries;
-    //Button buttonViewCard;
+    Button buttonViewCard;
 
     public ResultViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -29,7 +29,7 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         imageViewCardResult = itemView.findViewById(R.id.imageViewCardResult);
         textViewClass = itemView.findViewById(R.id.textViewClass);
         textViewSeries = itemView.findViewById(R.id.textViewSeries);
-        //buttonViewCard = itemView.findViewById(R.id.buttonViewCard);
+        buttonViewCard = itemView.findViewById(R.id.buttonViewCard);
     }
 
 }

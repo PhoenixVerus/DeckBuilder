@@ -1,11 +1,15 @@
 package CIS3334.deckbuilder;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -40,6 +44,16 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
         holder.textViewSeries.setText(cards.get(position).getSet().getSeries());
         holder.textViewClass.setText(cards.get(position).getSupertype());
         Picasso.get().load(cards.get(position).images.getSmallImg()).into(holder.imageViewCardResult);
+        holder.buttonViewCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Brain Fart", "View Card button clicked for card: " + cards.get(position).getName());
+                Context context = view.getContext();
+                Intent cardViewIntent = new Intent(context, CardViewActivity.class);
+                cardViewIntent.putExtra("Card", cards.get(position));
+                context.startActivity(cardViewIntent);
+            }
+        });
     }
 
     @Override

@@ -1,6 +1,8 @@
 package CIS3334.deckbuilder;
 
-public class Set {
+import java.io.Serializable;
+
+public class Set implements Serializable {
     public String series;
 
     Set(String series) {

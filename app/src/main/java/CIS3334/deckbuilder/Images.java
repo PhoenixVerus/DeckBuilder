@@ -12,4 +12,6 @@ public class Images implements Serializable {
     }
 
     public String getSmallImg() { return small; }
+
+    public String getLargeImg() { return large; }
 }
