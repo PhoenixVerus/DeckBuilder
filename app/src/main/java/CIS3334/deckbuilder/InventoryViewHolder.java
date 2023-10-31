@@ -9,9 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Class to hold the card search results from the API
+ * View holder for the inventory activity's recycler view;
+ * displays a card saved in the database or "inventory"
  */
-public class ResultViewHolder extends RecyclerView.ViewHolder {
+public class InventoryViewHolder extends RecyclerView.ViewHolder {
 
     TextView textViewName;
     TextView textViewRarity;
@@ -22,10 +23,10 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     Button buttonViewCard;
 
     /**
-     * result view holder constructor
-     * @param itemView
+     * inventory view holder constructor
+     * @param itemView view to be used
      */
-    public ResultViewHolder(@NonNull View itemView) {
+    public InventoryViewHolder(@NonNull View itemView) {
         super(itemView);
         textViewName = itemView.findViewById(R.id.textViewName);
         textViewRarity = itemView.findViewById(R.id.textViewRarity);

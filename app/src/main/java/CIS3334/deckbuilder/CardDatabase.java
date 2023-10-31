@@ -11,6 +11,9 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Room database to store card objects saved into "inventory"
+ */
 @Database(entities = {Card.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class CardDatabase extends RoomDatabase {
@@ -22,6 +25,11 @@ public abstract class CardDatabase extends RoomDatabase {
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
+    /**
+     * Retrieves instance of the Room database
+     * @param context
+     * @return Room database instance
+     */
     static CardDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (CardDatabase.class) {

@@ -2,16 +2,19 @@ package CIS3334.deckbuilder;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,9 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 /**
- * OLD: PokeApi class to call the Pokemon TCG API and retrieve card data;
- * used in previous Java course but appears to not work here; will most likely remove
- * if I can get Google Volley to work
+ * Class to call the Pokemon TCG API and retrieve card data;
+ * uses Google Volley to perform the API call
  */
 public class PokeApi {
 
@@ -39,6 +41,11 @@ public class PokeApi {
     Card retrievedCard;
     ArrayList<Card> cardList = new ArrayList<Card>();
 
+    /**
+     * PokeApi construction
+     * @param activityContext
+     * @param mainViewModel view model used with the main activity
+     */
     public PokeApi(Context activityContext, MainViewModel mainViewModel) {
         gson = new Gson();
         this.activityContext = activityContext;
@@ -46,61 +53,20 @@ public class PokeApi {
     }
 
     /**
-     * Method to retrieve a card from the PokeAPI
-     * @return matching card
+     * Makes the API call to the Pokemon TCG API and accepts back an object holding
+     * an arraylist of card objects
+     * @param query user's search inquiry
      */
-    /*
-    public void getCardWithVolley(String query) {
-        // Define URL to use.
-        String url = "https://api.pokemontcg.io/v2/cards/" + query;
-        //String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query;
-        // test with fixed URL
-        //url = "https://api.pokemontcg.io/v2/cards/xy1-1";
-        Log.d("Brain Fart","Get card using url =  " + url);
-
-        // Create a Volley web request to receive back a JSON object.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response)
-                    {
-                        Log.d("Brain Fart","Received Response ");
-                        String jsonFact= response.toString();
-                        Log.d("Brain Fart","JSON =  "+jsonFact);
-
-                        // Gson library module added for parsing json files
-                        Gson gson = new Gson();
-                        ApiDataWrapper data = gson.fromJson(jsonFact, ApiDataWrapper.class);
-                        Card newCard = data.data;
-                        Log.d("Brain Fart","Card read with name =  "+newCard.getName() );
-                        Log.d("Brain Fart","Card read with name =  "+newCard.getId() );
-
-                        retrievedCard = newCard;
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Brain Fart","error from JSON Request. VolleyError =  "+error.toString() );
-                    }
-                });
-
-        // Create a RequestQueue used to send web requests using Volley
-        RequestQueue queue = Volley.newRequestQueue(activityContext);
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(jsonObjectRequest);
-    }
-     */
-
     public void getCardArrayWithVolley(String query) {
-        String url = "https://api.pokemontcg.io/v2/cards?q=name:" + query + "&pageSize=3";
+        // URL to be used for API call; response size is limited to 5 to deal with performance issues and API call limits
+        String url = "https://api.pokemontcg.io/v2/cards?q=name:\"" + query + "\"&pageSize=5";
         Log.d("Brain Fart","Query input: " + url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            //received json response is converted into usable object
                             Log.d("Brain Fart","Received Response ");
                             String jsonFact= response.toString();
                             Log.d("Brain Fart","JSON =  "+jsonFact);
@@ -109,20 +75,23 @@ public class PokeApi {
                             Log.d("Brain Fart","Number of cards received =  "+dataArray.data.size());
                             // Loop through the array elements
                             for (Card newCard :dataArray.data) {
-                                // Remember to add the following to the module build.gradle file for the gson library for parsing json files
-                                // implementation 'com.google.code.gson:gson:2.10.1'//Card newCard = gson.fromJson(jsonFact, Card.class);
                                 Log.d("Brain Fart","Card read with name =  "+newCard.getName()+" and id =  "+newCard.getId() );
                                 retrievedCard = newCard;
-                                mainViewModel.insert(retrievedCard);
+                                cardList.add(newCard);
                             }
+                            //converted object is sent to the main view model to update the mutable live data
+                            mainViewModel.insert(cardList);
                         } catch (Exception e) {
-                            Log.d("Brain Fart", "In getCardArrayWithVolley -- JSONException = "+e.toString());
+                            Log.d("Brain Fart", "In getCardArrayWithVolley -- JSONException = " + e);
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        //listens for the network response and logs the code provided
+                        NetworkResponse networkResponse = error.networkResponse;
+                        Log.d("Brain Fart", "In onErrorResponse: " + networkResponse.statusCode);
                         Log.d("Brain Fart", "In getCardArrayWithVolley -- onErrorResponse = "+error);
                     }
                 });
@@ -132,4 +101,5 @@ public class PokeApi {
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20 * 1000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(jsonObjectRequest);
     }
+
 }

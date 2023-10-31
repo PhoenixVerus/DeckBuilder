@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:foregroundTint="#C50D0D"
     tools:context=".CardViewActivity">
 
     <Button
         android:id="@+id/buttonDeleteFromInv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:backgroundTint="#068A13"
-        android:text="Add to Inventory!"
+        android:layout_marginStart="32dp"
+        android:backgroundTint="#800000"
+        android:drawableTint="#9C0202"
+        android:foregroundTint="#8A0303"
+        android:text="Delete from Inventory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/buttonBackToInv"
@@ -22,8 +25,8 @@
         android:id="@+id/buttonBackToInv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Return to search results"
+        android:layout_marginStart="52dp"
+        android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewCard" />
 

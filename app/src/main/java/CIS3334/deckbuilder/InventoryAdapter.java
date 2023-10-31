@@ -10,39 +10,40 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.squareup.picasso.Picasso;
-
 /**
- * Class to send information to the results view holder
+ * The adapter that works with the inventory view holder to display
+ * a card saved in the database or "inventory"
  */
-public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
+public class InventoryAdapter extends RecyclerView.Adapter<InventoryViewHolder> {
 
     private List<Card> cards;
 
     /**
-     * Result adapter constructor
+     * inventory adapter constructor
      */
-    public ResultAdapter() {
+    public InventoryAdapter() {
         cards = new ArrayList<>();
     }
 
     /**
-     * Instantiates the result view holder that will work with the adapter and inflates it
+     * Instantiates the inventory view holder that will work with the adapter and inflates it
      * @param parent The ViewGroup into which the new View will be added after it is bound to
      *               an adapter position.
-     * @param ViewType The view type of the new View.
+     * @param viewType The view type of the new View.
      *
-     * @return the inflated result view holder
+     * @return the inflated inventory view holder
      */
     @NonNull
     @Override
-    public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int ViewType) {
+    public InventoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.search_result, parent, false);
-        return new ResultViewHolder(view);
+        return new InventoryViewHolder(view);
     }
 
     /**
@@ -52,21 +53,23 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InventoryViewHolder holder, int position) {
         holder.textViewName.setText(cards.get(position).getName());
         holder.textViewRarity.setText(cards.get(position).getRarity());
         holder.textViewTypes.setText(cards.get(position).getTypesString());
         holder.textViewSeries.setText(cards.get(position).getSet().getSeries());
         holder.textViewClass.setText(cards.get(position).getSupertype());
         Picasso.get().load(cards.get(position).images.getSmallImg()).into(holder.imageViewCardResult);
+
+        //the "View" button which sends an intent to the inventory card activity to view the card in full
         holder.buttonViewCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("Brain Fart", "View Card button clicked for card: " + cards.get(position).getName());
                 Context context = view.getContext();
-                Intent cardViewIntent = new Intent(context, CardViewActivity.class);
-                cardViewIntent.putExtra("Card", cards.get(position));
-                context.startActivity(cardViewIntent);
+                Intent invCardIntent = new Intent(context, InvCardActivity.class);
+                invCardIntent.putExtra("Card", cards.get(position));
+                context.startActivity(invCardIntent);
             }
         });
     }
@@ -85,4 +88,5 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultViewHolder> {
      * @param newCardList updated list of cards to display
      */
     public void updateCardList(List<Card> newCardList) { cards = newCardList; }
+
 }
